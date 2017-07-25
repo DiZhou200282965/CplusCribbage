@@ -21,7 +21,6 @@ public:
 		this->cardNum = CARD_NUM[0];
 		suit = emp;
 		this->cardValue = 0;
-		//test
 	}
 	void display();
 	void setCard(int suiteIndex, int cardNum);
@@ -172,17 +171,29 @@ void menu(Card deck[52]) {
 	while (flag) {
 		int option;
 		wcout << L"\n Welcome to Cribbage Game" << endl;
-		wcout << L"Declare how many players" << endl;
+		wcout << L"Please select the amount of players" << endl;
 
+		wcout << L"2. Two players" << endl;
+		wcout << L"3. Three players" << endl;
+		wcout << L"4. Four player" << endl;
 		wcout << L"0. exit" << endl;
 		cin >> option;
 
-		if (option == 1)
+		if (option == 2)
 		{
 			createDeck(deck);
 			displayDeck(deck);
 		}
-	
+		else if (option == 3)
+		{
+			createDeck(deck);
+			displayDeck(deck);
+		}
+		else if (option == 4)
+		{
+			createDeck(deck);
+			displayDeck(deck);
+		}
 		else if (option == 0)
 		{
 			flag = false;

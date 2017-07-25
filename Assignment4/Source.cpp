@@ -20,8 +20,7 @@ public:
 	Card() {
 		this->cardNum = CARD_NUM[0];
 		suit = emp;
-		this->cardValue = 0;
-		//test
+		this->cardValue = 0;	
 	}
 	void display();
 	void setCard(int suiteIndex, int cardNum);
@@ -89,7 +88,7 @@ void Card::setCard(int suiteIndex, int cardNum) {
 
 	this->cardValue = cardNum > 10 ? 10 : cardNum;
 }
-//asdf
+
 //class Board {
 //	enum direction { east, south, west, north };
 //public:
@@ -147,6 +146,9 @@ public:
 	string getPlayerName() {
 		return this->platerName;
 	}
+	void draw() {
+
+	}
 	;
 private:
 	string platerName;
@@ -170,22 +172,29 @@ void menu(Card deck[52]) {
 	bool flag = true;
 	while (flag) {
 		int option;
+		string name="";
 		wcout << L"\n Welcome to Cribbage Game" << endl;
-		wcout << L"Declare how many players" << endl;
-
-		wcout << L"0. exit" << endl;
-		cin >> option;
-
+		//wcout << L"Declare how many players" << endl;
+		//wcout << L"0. exit" << endl;
+		//cin >> option;
+		//for (int i = 0; i < option; i++)
+		//{
+		//	wcout << L"What's player" << i << L" Name";
+		//}
+		getline(cin, name);
+			cout << name;
+		
+		/*
 		if (option == 1)
 		{
 			createDeck(deck);
 			displayDeck(deck);
-		}
-	
+		}	
 		else if (option == 0)
 		{
 			flag = false;
-		}
+		}*/
+
 	}
 }
 Card cutDeck(Card deck[52]) {
@@ -252,7 +261,7 @@ int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	srand(time(NULL));
 	Card deck[52];
-	//Player Players[4];
+	vector<Player> Players;
 	// *** TBD add vector to store all the cuts
 	menu(deck);
 	return 0;

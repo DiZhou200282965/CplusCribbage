@@ -132,28 +132,27 @@ void Card::setCard(int suiteIndex, int cardNum) {
 //	int totalScore;
 //
 //};
-//class Player {
-//public:
-//	
-//	Player() {
-//
-//	}
-//	Player(string playerName) {
-//
-//	}
-//	vector<string> getHand() {
-//		return this->hand;
-//	}
-//	string getPlayerName() {
-//		return this->platerName;
-//	}
-//	;
-//private:
-//	string platerName;
-//	vector<string> hand;
-//	;
-//
-//};
+class Player {
+public:
+	Player() {
+
+	}
+	Player(string playerName) {
+		this->platerName = playerName;
+	}
+	vector<string> getHand() {
+		return this->hand;
+	}
+	string getPlayerName() {
+		return this->platerName;
+	}
+	;
+private:
+	string platerName;
+	vector<string> hand;
+	;
+
+};
 void createDeck(Card deck[52]);
 void displayDeck(Card deck[52]);
 void menu(Card deck[52]);

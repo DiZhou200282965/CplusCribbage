@@ -21,6 +21,7 @@ public:
 		this->cardNum = CARD_NUM[0];
 		suit = emp;
 		this->cardValue = 0;
+		//test
 	}
 	void display();
 	void setCard(int suiteIndex, int cardNum);

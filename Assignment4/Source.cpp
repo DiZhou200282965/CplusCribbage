@@ -20,7 +20,8 @@ public:
 	Card() {
 		this->cardNum = CARD_NUM[0];
 		suit = emp;
-		this->cardValue = 0;	
+		this->cardValue = 0;
+		
 	}
 	void display();
 	void setCard(int suiteIndex, int cardNum);
@@ -174,22 +175,17 @@ void menu(Card deck[52]) {
 		int option;
 		string name="";
 		wcout << L"\n Welcome to Cribbage Game" << endl;
-		//wcout << L"Declare how many players" << endl;
-		//wcout << L"0. exit" << endl;
-		//cin >> option;
-		//for (int i = 0; i < option; i++)
-		//{
-		//	wcout << L"What's player" << i << L" Name";
-		//}
-		getline(cin, name);
-			cout << name;
-		
-		/*
+		wcout << L"Declare how many players" << endl;
+
+		wcout << L"0. exit" << endl;
+		cin >> option;
+
 		if (option == 1)
 		{
 			createDeck(deck);
 			displayDeck(deck);
-		}	
+		}
+	
 		else if (option == 0)
 		{
 			flag = false;

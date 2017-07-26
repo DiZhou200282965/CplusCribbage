@@ -5,17 +5,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <array>
 
 using namespace std;
-
 const wstring CARD_NUM[] = { L"emp",L"A",L"2",L"3",L"4",L"5",L"6",L"7",L"8",L"9",L"10",L"J",L"Q",L"K" };
 
 class Card {
-	enum SUITE
-	{
-		emp, club, diamond, heart, spade
-	};
+	
 public:
 	Card() {
 		this->cardNum = CARD_NUM[0];
@@ -23,12 +18,17 @@ public:
 		this->cardValue = 0;
 		
 	}
+	
 	void display();
 	void setCard(int suiteIndex, int cardNum);
 	wstring getCardNum();
 	int getCardValue();
 	~Card() {};
 private:
+	enum SUITE
+	{
+		emp, club, diamond, heart, spade
+	};
 	wstring cardNum;
 	SUITE suit;
 	int cardValue;
@@ -61,7 +61,7 @@ void Card::display() {
 	{
 		wcout << L"";
 	}
-	//wcout << L"(" << cardValue << L")";
+	wcout << L"(" << cardValue << L")";
 }
 void Card::setCard(int suiteIndex, int cardNum) {
 
@@ -90,114 +90,150 @@ void Card::setCard(int suiteIndex, int cardNum) {
 	this->cardValue = cardNum > 10 ? 10 : cardNum;
 }
 
-//class Board {
-//	enum direction { east, south, west, north };
-//public:
-//	Board(vector<Player> players) {
-//		this->players = players;
-//	}
-//	void displayBoard() {
-//
-//	}
-//	vector<wstring> getCrib() {
-//		return this->crib;
-//	}
-//	vector<wstring> getCut() {
-//		return this->cut;
-//	}
-//	vector<wstring> getCut() {
-//		return this->cut;
-//	}
-//	;
-//private:
-//	vector<wstring> cut;
-//	vector<wstring> crib;
-//	vector<wstring> playedCards;
-//	vector<Player> players;
-//	int totalScore;
-//};
-//
-//class Game {
-//public :
-//	Game() {
-//		
-//	}
-//	void postGameProcess() {
-//
-//	}
-//	void pegging() {
-//
-//	}
-//	;
-//private :
-//	int totalScore;
-//
-//};
 class Player {
-public:
-	Player() {
-
-	}
-	Player(string playerName) {
+public:	
+	Player(wstring playerName) {
 		this->platerName = playerName;
+		score = 0;
 	}
-	vector<string> getHand() {
+	vector<Card> getHand() {
 		return this->hand;
 	}
-	string getPlayerName() {
+	void setHand(vector<Card> hand) {
+		this->hand = hand;
+	}
+	wstring getPlayerName() {
 		return this->platerName;
+	}
+	void setpositionIndex(int i) {
+		this->positionIndex = i;
+	}
+	int getScore() {
+		return this->score;
 	}
 	void draw() {
 
 	}
 	;
 private:
-	string platerName;
-	vector<string> hand;
+	wstring platerName;
+	int positionIndex;
+	vector<Card> hand;
+	int score;
 	;
 
 };
-void createDeck(Card deck[52]);
-void displayDeck(Card deck[52]);
-void menu(Card deck[52]);
-int getRand(int randMax);
-Card cutDeck(Card deck[52]);
-void shuflleDeck(Card deck[52]);
+
+
+class Board {	
+public:
+	enum direction { east, south, west, north };
+	Board(vector<Player> players, vector<Card> deck) {
+		this->deck = deck;
+		this->players = players;
+		roundScore = 0;
+	}
+	void displayBoard() {
+
+	}
+	void printScore() {
+		wcout << "##################################################" << endl;
+		wcout<< "Score: " << endl;
+		for (int i = 0; i < this->players.size(); i++)
+		{
+			wcout << this->players[i].getPlayerName() << " :                 " << this->players[i].getScore()<<endl;
+		}
+		
+	}
+	vector<Card> getCrib() {
+		return this->crib;
+	}
+	void setCrib(vector<Card> crib) {
+		this->crib= crib;
+	}
+	Card getCut() {
+		return this->cut;
+	}
+	void setCut(Card c) {
+		this->cut = c;
+	}
+	vector<Card> getDeck() {
+		return this->deck;
+	}
+
+
+	vector<Player> getPlayers() {
+		return this->players;
+	}
+	void addToPlayers(Player p) {
+		this->players.push_back(p);
+	}
+
+	int getRoundScore() {
+		return roundScore;
+	}
+	;
+private:
+	vector<Card> deck;
+	Card cut;
+	vector<Card> roundPlay;
+	vector<Card> crib;
+	vector<vector<Card>> playerHand; //store original hands
+	vector<Player> players;	
+	int roundScore;
+};
+
+class Game {
+public :	
+	Game(Board& myboard)  {
+		this->myboard = &myboard;
+	}
+	void postGameProcess() {
+
+	}
+	void pegging() {
+
+	}
+	Board* getBoard() {
+		return myboard;
+	}
+	;
+private :
+	int totalScore;
+	Board *myboard;
+};
+
+
+int main() {
+	vector<Card> createDeck();
+	void displayDeck(vector<Card> deck);
+	void menu(Game myGame);
+	int getRand(int randMax);
+	Card drawCard(vector<Card>&deck);
+	Card cutDeck(vector<Card>&deck);
+	void shuflleDeck(vector<Card> deck);
+
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	srand(time(NULL));
+	vector<Card> deck = createDeck();
+	vector<Player> Players;
+	Board myBoard(Players, deck);
+	Game myGame(myBoard);
+	menu(myGame);
+	return 0;
+}
+
 
 
 int getRand(int randMax) {
 	int random_integer = rand() % randMax + 1;
 	return random_integer;
 }
-void menu(Card deck[52]) {
-	bool flag = true;
-	while (flag) {
-		int option;
-		string name="";
-		wcout << L"\n Welcome to Cribbage Game" << endl;
-		wcout << L"Declare how many players" << endl;
 
-		wcout << L"0. exit" << endl;
-		cin >> option;
-
-		if (option == 1)
-		{
-			createDeck(deck);
-			displayDeck(deck);
-		}
-	
-		else if (option == 0)
-		{
-			flag = false;
-		}*/
-
-	}
-}
-Card cutDeck(Card deck[52]) {
+Card drawCard(vector<Card>&deck) {
 	int rand = getRand(52);
 	Card tempCard = deck[rand - 1];
 	int num = 0;
-	//**TBD 
 	while (tempCard.getCardNum() == L"emp"&&num<52) {
 		rand = getRand(52);
 		tempCard = deck[rand - 1];
@@ -209,10 +245,27 @@ Card cutDeck(Card deck[52]) {
 	}
 	else {
 		deck[rand - 1].setCard(0, 0);
+		deck[rand - 1].display();
 	}
 	return tempCard;
 }
-void shuflleDeck(Card deck[52]) {
+Card cutDeck(vector<Card>&deck) {
+	int rand = getRand(52);
+	Card tempCard = deck[rand - 1];
+	int num = 0;
+	while (tempCard.getCardNum() == L"emp"&&num<52) {
+		rand = getRand(52);
+		tempCard = deck[rand - 1];
+		num++;
+	}
+	if (num>52)
+	{
+		wcout << "Deck is empty";
+	}
+	return tempCard;
+}
+
+void shuflleDeck(vector<Card>&deck) {
 
 	int rand1, rand2;
 	for (int i = 0; i < 52; i++)
@@ -226,8 +279,10 @@ void shuflleDeck(Card deck[52]) {
 		deck[rand1 - 1] = deck[rand2 - 1];
 		deck[rand2 - 1] = tempCard;
 	}
+
 }
-void displayDeck(Card deck[52]) {
+void displayDeck(vector<Card>&deck) {
+	
 	for (int k = 0; k < 52; k++)
 	{
 		if (k % 13 == 0 && k != 0)
@@ -237,28 +292,72 @@ void displayDeck(Card deck[52]) {
 		wcout << " ";
 		deck[k].display();
 	}
+	wcout << endl;
 }
 
-void createDeck(Card deck[52]) {
-
+vector<Card> createDeck() {
+	vector<Card> deck;
 	for (int i = 1; i <= 4; i++)
 	{
 		for (int k = 1; k <= 13; k++)
 		{
 			Card card;
 			card.setCard(i, k);
-			deck[(i - 1) * 13 + k - 1] = card;
+			deck.push_back(card);
 		}
 	}
+	return deck;
 }
+void menu(Game myGame) {
+	//bool flag = true;
+	//while (flag) {
+	int option;
+	wcout << L"\n Welcome to Cribbage Game" << endl;
+	wcout << L"Declare how many players" << endl;
+	wcout << L"Please enter Name" << endl;
+	//********* TBD add name
+	wstring names[2] = { L"Di",L"Mike"};
+	for (int i = 0; i < 2; i++)
+	{
+		Player tempPlayer(names[i]);
+		myGame.getBoard()->addToPlayers(tempPlayer);
+	}
+	int playerNum = myGame.getBoard()->getPlayers().size();
+	vector<Player> tempPlayers = myGame.getBoard()->getPlayers();
+	vector<Card> tempDeck = myGame.getBoard()->getDeck();
+	//*********  TBD design seat
+	wcout << "Players please pick your seat"<<endl; 
+	for (int i = 0; i < playerNum; i++)
+	{
+		tempPlayers[i].setpositionIndex(i);
+	}
+	//*************** Compare biggest cut   int biggestCutValue=0;
+	wcout << L"game commence"<<endl;
+	wcout << "The deck has been cut with the following results. "<<endl;
+	for (int i = 0; i < playerNum; i++)
+	{
+		wcout << L"Player " << i << ": " << tempPlayers[i].getPlayerName() << "Cut";
+		cutDeck(tempDeck).display();
+		wcout << endl;
+	}
+	wcout << "Di is the Dealer"<<endl;
+	wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
+	shuflleDeck(tempDeck);
 
- 
-int main() {
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	srand(time(NULL));
-	Card deck[52];
-	vector<Player> Players;
-	// *** TBD add vector to store all the cuts
-	menu(deck);
-	return 0;
+	wcout << "##########################################################################" << endl;
+	for (int i = 0; i < playerNum; i++)
+	{
+		for (int i = 0; i < 6; i++) //2 person 6 cards
+		{
+			drawCard(tempDeck);
+
+		}
+	}
+	myGame.getBoard()->printScore();
+
+
+
+
+
+	//}
 }

@@ -110,6 +110,7 @@ public:
 		this->positionIndex = i;
 	}
 	int getpositionIndex() {
+		
 		return positionIndex;
 	}
 	int getScore() {
@@ -157,17 +158,16 @@ public:
 
 	}
 	Player findByPosition(int pi) {
-		Player p;
-		int index;
+	/*	Player p;
+		
 		for (int i = 0; i < this->players.size(); i++)
-		{
-			index = players[i].getpositionIndex();
-			if (index == pi)
+		{			
+			if (.getpositionIndex() == pi)
 			{
 				p=players[i];
 			}
 		}
-		return p;
+		return p;*/
 	}
 	void printScore() {
 		wcout << "##################################################" << endl;
@@ -178,7 +178,7 @@ public:
 		}			
 	}
 	void setFirstHand(vector<vector<Card>> fh) {
-		this->playerHand = fh;
+		this->playerHands = fh;
 	}
 	vector<Card> getCrib() {
 		return this->crib;
@@ -216,7 +216,7 @@ private:
 	Card cut;
 	vector<Card> roundPlay;
 	vector<Card> crib;
-	vector<vector<Card>> playerHand; //store original hands
+	vector<vector<Card>> playerHands; //store original hands
 	vector<Player> players;	
 	Player dealer;
 	int roundScore;
@@ -387,7 +387,7 @@ void menu(Game myGame) {
 
 	for (int i = 0; i < input1; i++)
 	{
-		wcout << L"Please enter Name " << endl;
+		wcout<< "Player " <<i << ",please enter Name " << endl;
 		ws(wcin); // get rid of space
 		wcin.getline(str, 50);
 		wstr = str;
@@ -395,13 +395,6 @@ void menu(Game myGame) {
 		myGame.getBoard()->addToPlayers(tempPlayer);
 	}
 	
-	////********* TBD add name
-	//wstring names[2] = { L"Di",L"Mike"};
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	Player tempPlayer(names[i]);
-	//	myGame.getBoard()->addToPlayers(tempPlayer);
-	//}
 
 	// temp variables declaration
 	Board *tempBoard = myGame.getBoard();
@@ -410,36 +403,42 @@ void menu(Game myGame) {
 	vector<Card> tempDeck = tempBoard->getDeck();
 
 
-	////*********  TBD design seat
-	//wcout << "Players please pick your seat"<<endl; 
-for (int i = 0; i < playerNum; i++)
-{
-	if (input1 ==2)
+//	////*********  TBD design seat
+//	wcout << "Players please pick your seat"<<endl; 
+//for (int i = 0; i < playerNum; i++)
+//{
+//	if (input1 ==2)
+//	{
+//		wcout << "select from options below:" << endl;
+//		wcout << "          1.North \n\n" << endl;
+//		wcout << "          4.South" << endl;
+//	}
+//	else if (input1==3)
+//	{
+//		wcout << "select from options below:" << endl;
+//		wcout << "          1.North \n\n" << endl;
+//		wcout << "  2.West               3.East     " << endl;
+//	}
+//	else if (input1 ==4)
+//	{
+//		wcout << "select from options below:" << endl;
+//		wcout << "          1.North \n\n" << endl;
+//		wcout << "  2.West               3.East     " << endl;
+//		wcout << "          4.South " << endl;
+//	}
+//	while (!(wcin >> input2) || input2>4) {
+//		wcout << "bad input";
+//		wcin.clear();
+//		wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+//	}
+//	tempPlayers[i].setpositionIndex(input2);
+//}
+
+	for (int i = 0; i < playerNum; i++)
 	{
-		wcout << "select from options below:" << endl;
-		wcout << "          1.North \n\n" << endl;
-		wcout << "          4.South" << endl;
+		tempPlayers[i].setpositionIndex(i+1);
+		wcout << tempPlayers[i].getpositionIndex() <<endl;
 	}
-	else if (input1==3)
-	{
-		wcout << "select from options below:" << endl;
-		wcout << "          1.North \n\n" << endl;
-		wcout << "  2.West               3.East     " << endl;
-	}
-	else if (input1 ==4)
-	{
-		wcout << "select from options below:" << endl;
-		wcout << "          1.North \n\n" << endl;
-		wcout << "  2.West               3.East     " << endl;
-		wcout << "          4.South " << endl;
-	}
-	while (!(wcin >> input2) || input2>4) {
-		wcout << "bad input";
-		wcin.clear();
-		wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-	}
-	tempPlayers[i].setpositionIndex(input2);
-}
 
 	//*************** Compare biggest cut   int biggestCutValue=0;
 	wcout << "____ New Screen ____" << endl;
@@ -451,10 +450,7 @@ for (int i = 0; i < playerNum; i++)
 	{		
 		tempPlayers[i].setCut(cutDeck(tempDeck));
 	}
-	wcout << tempBoard->findByPosition(1).getPlayerName();
-	wcout << tempBoard->findByPosition(2).getPlayerName();
-	wcout << tempBoard->findByPosition(3).getPlayerName();
-	wcout << tempBoard->findByPosition(4).getPlayerName();
+
 	/*if (input1 == 2)
 	{
 		wcout << endl;

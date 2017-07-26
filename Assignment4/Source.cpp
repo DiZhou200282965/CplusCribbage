@@ -18,7 +18,9 @@ public:
 		this->cardValue = 0;
 		
 	}
-	
+	int  getCardIndexValue() {
+		return this->cardIndexValue;
+	}
 	void display();
 	void setCard(int suiteIndex, int cardNum);
 	wstring getCardNum();
@@ -32,6 +34,7 @@ private:
 	wstring cardNum;
 	SUITE suit;
 	int cardValue;
+	int cardIndexValue;
 };
 
 wstring Card::getCardNum() {
@@ -86,7 +89,7 @@ void Card::setCard(int suiteIndex, int cardNum) {
 		suit = emp;
 	}
 	this->cardNum = CARD_NUM[cardNum];
-
+	cardIndexValue = cardNum;
 	this->cardValue = cardNum > 10 ? 10 : cardNum;
 }
 
@@ -105,13 +108,6 @@ public:
 	}
 	wstring getPlayerName() {
 		return this->platerName;
-	}
-	void setpositionIndex(int i) {
-		this->positionIndex = i;
-	}
-	int getpositionIndex() {
-		
-		return positionIndex;
 	}
 	int getScore() {
 		return this->score;
@@ -138,7 +134,7 @@ public:
 	;
 private:
 	wstring platerName;
-	int positionIndex;
+	
 	vector<Card> hand;
 	int score;
 	Card cut;
@@ -157,18 +153,7 @@ public:
 	void displayBoard() {
 
 	}
-	Player findByPosition(int pi) {
-	/*	Player p;
-		
-		for (int i = 0; i < this->players.size(); i++)
-		{			
-			if (.getpositionIndex() == pi)
-			{
-				p=players[i];
-			}
-		}
-		return p;*/
-	}
+	
 	void printScore() {
 		wcout << "##################################################" << endl;
 		wcout<< "Score: " << endl;
@@ -209,6 +194,9 @@ public:
 	}
 	void setDealer(Player dealer) {
 		this->dealer = dealer;
+	}
+	bool isDealer(Player p) {
+		return p.getPlayerName() == dealer.getPlayerName();
 	}
 	;
 private:
@@ -324,7 +312,44 @@ vector<Card> createDeck() {
 	return deck;
 }
 
+Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck) {
+	bool tie;
+	vector<Card>  cutPool;
+	Player p;
+	int biggest = 0;
+	do {
+		//display players and its cut
+		tie = false;
+		for (int k = 0; k < tempPlayers.size(); k++)
+		{
+			tempPlayers[k].setCut(cutDeck(tempDeck));
+			wcout << tempPlayers[k].getPlayerName() << ": ";
+			tempPlayers[k].getCut().display();
+			wcout << endl;
+			if (tempPlayers[k].getCut().getCardIndexValue()>biggest)
+			{
+				biggest = tempPlayers[k].getCut().getCardIndexValue();
+			}
+		}
+		int counter = 0;
+		for (int k = 0; k < tempPlayers.size(); k++)
+		{
+			if (tempPlayers[k].getCut().getCardIndexValue() == biggest)
+			{
+				counter++;
+				p = tempPlayers[k];
+			}
+		}
 
+		if (counter>1)
+		{
+			tie = true;
+			wcout << "There is a tie, recut";
+		}
+	} while (tie);
+
+	return p;
+}
 int main() {
 	vector<Card> createDeck();
 	void displayDeck(vector<Card> deck);
@@ -333,7 +358,7 @@ int main() {
 	Card drawCard(vector<Card>&deck);
 	Card cutDeck(vector<Card>&deck);
 	void shuflleDeck(vector<Card> deck);
-
+	Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck);
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	srand(time(NULL));
 	vector<Card> deck = createDeck();
@@ -380,11 +405,8 @@ void menu(Game myGame) {
 		toCrib = 1;
 		fromDeck = 0;
 	}
-
-
 	wchar_t str[50];
 	wstring wstr;
-
 	for (int i = 0; i < input1; i++)
 	{
 		wcout<< "Player " <<i << ",please enter Name " << endl;
@@ -403,101 +425,17 @@ void menu(Game myGame) {
 	vector<Card> tempDeck = tempBoard->getDeck();
 
 
-//	////*********  TBD design seat
-//	wcout << "Players please pick your seat"<<endl; 
-//for (int i = 0; i < playerNum; i++)
-//{
-//	if (input1 ==2)
-//	{
-//		wcout << "select from options below:" << endl;
-//		wcout << "          1.North \n\n" << endl;
-//		wcout << "          4.South" << endl;
-//	}
-//	else if (input1==3)
-//	{
-//		wcout << "select from options below:" << endl;
-//		wcout << "          1.North \n\n" << endl;
-//		wcout << "  2.West               3.East     " << endl;
-//	}
-//	else if (input1 ==4)
-//	{
-//		wcout << "select from options below:" << endl;
-//		wcout << "          1.North \n\n" << endl;
-//		wcout << "  2.West               3.East     " << endl;
-//		wcout << "          4.South " << endl;
-//	}
-//	while (!(wcin >> input2) || input2>4) {
-//		wcout << "bad input";
-//		wcin.clear();
-//		wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-//	}
-//	tempPlayers[i].setpositionIndex(input2);
-//}
-
-	for (int i = 0; i < playerNum; i++)
-	{
-		tempPlayers[i].setpositionIndex(i+1);
-		wcout << tempPlayers[i].getpositionIndex() <<endl;
-	}
-
+	wcout << "Players please take your seats." << endl;
 	//*************** Compare biggest cut   int biggestCutValue=0;
-	wcout << "____ New Screen ____" << endl;
+
 	wcout << L"Status: The match is ready to start."<<endl;
 	wcout << "The deck has been cut with the following results. "<<endl;
-	// diaplay cut result
-
-	for (int i = 0; i < playerNum; i++)
-	{		
-		tempPlayers[i].setCut(cutDeck(tempDeck));
-	}
-
-	/*if (input1 == 2)
-	{
-		wcout << endl;
-		wcout << "            " << tempBoard->findByPosition(1).getPlayerName() << " \n\n" << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(1).getCut().display();
-		wcout << endl;
-		wcout << "            " << tempBoard->findByPosition(4).getPlayerName()<< endl;
-		wcout << "              ";
-	    tempBoard->findByPosition(2).getCut().display();
-		wcout << endl;
-	}
-	else if (input1 == 3)
-	{
-		wcout <<  endl;
-		wcout << "            "<< tempBoard->findByPosition(1).getPlayerName()<<" \n\n" << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(1).getCut().display();
-		wcout << endl;
-		wcout << "    "<< tempBoard->findByPosition(2).getPlayerName() <<"                 "<< tempBoard->findByPosition(3).getPlayerName() << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(2).getCut().display();
-		wcout << "              ";
-		tempBoard->findByPosition(3).getCut().display();
-	}
-	else if (input1 == 4)
-	{
-		wcout  << endl;
-		wcout << "            " << tempBoard->findByPosition(1).getPlayerName() << " \n\n" << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(1).getCut().display();
-		wcout << endl;
-		wcout << "    " << tempBoard->findByPosition(2).getPlayerName() << "                 " << tempBoard->findByPosition(3).getPlayerName() << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(2).getCut().display();
-		wcout << "              ";
-		tempBoard->findByPosition(3).getCut().display();
-		wcout << "            " << tempBoard->findByPosition(4).getPlayerName() << endl;
-		wcout << "              ";
-		tempBoard->findByPosition(4).getCut().display();
-		wcout << endl;
-	}*/
-	// compare cut 
 
 
+	// cutting process 
+	;
 
-	wcout << "is the Dealer"<<endl;
+	wcout <<endl<< cutProcess(tempPlayers, tempDeck).getPlayerName()<< "  "<< "is the Dealer"<<endl;
 	wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
 	shuflleDeck(tempDeck);
 

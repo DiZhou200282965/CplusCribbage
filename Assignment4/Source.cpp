@@ -210,25 +210,13 @@ private:
 	int roundScore;
 };
 
-class Game {
-public :	
-	Game(Board& myboard)  {
-		this->myboard = &myboard;
-	}
-	void postGameProcess() {
 
-	}
-	void pegging() {
 
-	}
-	Board* getBoard() {
-		return myboard;
-	}
-	;
-private :
-	int totalScore;
-	Board *myboard;
-};
+
+
+
+
+
 int getRand(int randMax) {
 	int random_integer = rand() % randMax + 1;
 	return random_integer;
@@ -367,6 +355,132 @@ void displayBoard(vector<Card>tempDeck,Board *tempBoard,vector<Player>tempPlayer
 
 }
 
+
+
+
+class Game {
+public:
+	Game(Board& myboard) {
+		this->myboard = &myboard;
+	}
+	void postGameProcess() {
+
+	}
+	void pegging() {
+
+	}
+	Board* getBoard() {
+		return myboard;
+	}
+
+	void menu() {
+
+		int drawNum, toCrib, fromDeck;
+
+		//bool flag = true;
+		//while (flag) {
+		int intIn;
+
+		wcout << L"\n Welcome to Cribbage Game" << endl;
+		wcout << L"Declare how many players" << endl;
+		while (!(wcin >> intIn) || intIn>4) {
+			wcout << "you can only decare 2-4 players";
+			wcin.clear();
+			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+		if (intIn == 2)
+		{
+			drawNum = 6;
+			toCrib = 2;
+			fromDeck = 0;
+		}
+		else if (intIn == 3)
+		{
+			drawNum = 5;
+			toCrib = 1;
+			fromDeck = 0;
+		}
+		else if (intIn == 4)
+		{
+			drawNum = 5;
+			toCrib = 1;
+			fromDeck = 0;
+		}
+		wchar_t str[50];
+		wstring wstr;
+		for (int i = 0; i < intIn; i++)
+		{
+			wcout << "Player " << i << ",please enter Name " << endl;
+			ws(wcin); // get rid of space
+			wcin.getline(str, 50);
+			wstr = str;
+			Player tempPlayer(str);
+			getBoard()->addToPlayers(tempPlayer);
+		}
+
+
+		// temp variables declaration
+		Board *tempBoard = getBoard();
+		int playerNum = tempBoard->getPlayers().size();
+		vector<Player> tempPlayers = tempBoard->getPlayers();
+		vector<Card> tempDeck = tempBoard->getDeck();
+
+
+		wcout << "Players please take your seats." << endl;
+		//*************** Compare biggest cut   int biggestCutValue=0;
+
+		wcout << L"Status: The match is ready to start." << endl;
+		wcout << "The deck has been cut with the following results. " << endl;
+
+
+		wcout << endl << cutProcess(tempPlayers, tempDeck).getPlayerName() << "  " << "is the Dealer" << endl;
+		wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
+		wcout << "shuffling deck ......" << endl;
+		wcout << "Draw cards ......" << endl;
+
+		shuflleDeck(tempDeck);
+
+
+		vector<vector<Card>> totalHands;
+		for (int k = 0; k < playerNum; k++)
+		{
+			vector<Card> hand;
+			for (int i = 0; i < 6; i++) //2 person 6 cards
+			{
+				hand.push_back(drawCard(tempDeck));
+				tempPlayers[k].setHand(hand);	 // save to player.hand		
+			}
+			totalHands.push_back(hand); // save to fist board.firsthand 
+		}
+		tempBoard->setFirstHand(totalHands);
+
+		displayBoard(tempDeck, tempBoard, tempPlayers);
+
+		wcout << "Status: Creating the crib for the round." << endl;
+		displayBoard(tempDeck, tempBoard, tempPlayers);
+		for (int k = 0; k < playerNum; k++)
+		{
+			wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?" << endl;
+			/*wcin >> intIn;
+			while (!(wcin >> intIn) || intIn>4) {
+			wcout << "you can only decare 2-4 players";
+			wcin.clear();
+			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+			}*/
+		}
+
+	}
+	;
+private:
+	int totalScore;
+	Board *myboard;
+};
+
+
+
+
+
+
 int main() {
 	vector<Card> createDeck();
 	void displayDeck(vector<Card> deck);
@@ -386,7 +500,8 @@ int main() {
 	vector<Player> Players;
 	Board myBoard(Players, deck);
 	Game myGame(myBoard);
-	menu(myGame);
+	myGame.menu();
+	//menu(myGame);
 
 
 	system("pause");
@@ -395,98 +510,98 @@ int main() {
 
 
 
-void menu(Game myGame) {
-	 int drawNum, toCrib, fromDeck;
-
-	//bool flag = true;
-	//while (flag) {
-	int intIn;
-
-	wcout << L"\n Welcome to Cribbage Game" << endl;
-	wcout << L"Declare how many players" << endl;
-	while (!(wcin >> intIn)|| intIn>4) {
-		wcout << "you can only decare 2-4 players";
-		wcin.clear();
-		wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-	}
-	if (intIn ==2 )
-	{
-		drawNum = 6;
-		toCrib = 2;
-		fromDeck = 0;
-	}
-	else if (intIn==3)
-	{
-		drawNum = 5;
-		toCrib = 1;
-		fromDeck = 0;
-	}
-	else if (intIn==4)
-	{
-		drawNum = 5;
-		toCrib = 1;
-		fromDeck = 0;
-	}
-	wchar_t str[50];
-	wstring wstr;
-	for (int i = 0; i < intIn; i++)
-	{
-		wcout<< "Player " <<i << ",please enter Name " << endl;
-		ws(wcin); // get rid of space
-		wcin.getline(str, 50);
-		wstr = str;
-		Player tempPlayer(str);
-		myGame.getBoard()->addToPlayers(tempPlayer);
-	}
-	
-
-	// temp variables declaration
-	Board *tempBoard = myGame.getBoard();
-	int playerNum = tempBoard->getPlayers().size();
-	vector<Player> tempPlayers = tempBoard->getPlayers();
-	vector<Card> tempDeck = tempBoard->getDeck();
-
-
-	wcout << "Players please take your seats." << endl;
-	//*************** Compare biggest cut   int biggestCutValue=0;
-
-	wcout << L"Status: The match is ready to start."<<endl;
-	wcout << "The deck has been cut with the following results. "<<endl;
-
-
-	wcout <<endl<< cutProcess(tempPlayers, tempDeck).getPlayerName()<< "  "<< "is the Dealer"<<endl;
-	wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
-	wcout << "shuffling deck ......" << endl;
-	wcout << "Draw cards ......" << endl;
-
-	shuflleDeck(tempDeck);
-
-	
-	vector<vector<Card>> totalHands;
-	for (int k = 0; k < playerNum; k++)
-	{
-		vector<Card> hand;
-		for (int i = 0; i < 6; i++) //2 person 6 cards
-		{
-			hand.push_back(drawCard(tempDeck));		
-			tempPlayers[k].setHand(hand);	 // save to player.hand		
-		}
-		totalHands.push_back(hand); // save to fist board.firsthand 
-	}
-	tempBoard->setFirstHand(totalHands);
-
-	displayBoard(tempDeck, tempBoard, tempPlayers);
-
-	wcout << "Status: Creating the crib for the round." << endl;
-	displayBoard(tempDeck, tempBoard, tempPlayers);
-	for (int k = 0; k < playerNum; k++)
-	{
-		wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?" << endl;
-		/*wcin >> intIn;
-		while (!(wcin >> intIn) || intIn>4) {
-			wcout << "you can only decare 2-4 players";
-			wcin.clear();
-			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-		}*/
-	}
-}
+//void menu(Game myGame) {
+//	 int drawNum, toCrib, fromDeck;
+//
+//	//bool flag = true;
+//	//while (flag) {
+//	int intIn;
+//
+//	wcout << L"\n Welcome to Cribbage Game" << endl;
+//	wcout << L"Declare how many players" << endl;
+//	while (!(wcin >> intIn)|| intIn>4) {
+//		wcout << "you can only decare 2-4 players";
+//		wcin.clear();
+//		wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+//	}
+//	if (intIn ==2 )
+//	{
+//		drawNum = 6;
+//		toCrib = 2;
+//		fromDeck = 0;
+//	}
+//	else if (intIn==3)
+//	{
+//		drawNum = 5;
+//		toCrib = 1;
+//		fromDeck = 0;
+//	}
+//	else if (intIn==4)
+//	{
+//		drawNum = 5;
+//		toCrib = 1;
+//		fromDeck = 0;
+//	}
+//	wchar_t str[50];
+//	wstring wstr;
+//	for (int i = 0; i < intIn; i++)
+//	{
+//		wcout<< "Player " <<i << ",please enter Name " << endl;
+//		ws(wcin); // get rid of space
+//		wcin.getline(str, 50);
+//		wstr = str;
+//		Player tempPlayer(str);
+//		myGame.getBoard()->addToPlayers(tempPlayer);
+//	}
+//	
+//
+//	// temp variables declaration
+//	Board *tempBoard = myGame.getBoard();
+//	int playerNum = tempBoard->getPlayers().size();
+//	vector<Player> tempPlayers = tempBoard->getPlayers();
+//	vector<Card> tempDeck = tempBoard->getDeck();
+//
+//
+//	wcout << "Players please take your seats." << endl;
+//	//*************** Compare biggest cut   int biggestCutValue=0;
+//
+//	wcout << L"Status: The match is ready to start."<<endl;
+//	wcout << "The deck has been cut with the following results. "<<endl;
+//
+//
+//	wcout <<endl<< cutProcess(tempPlayers, tempDeck).getPlayerName()<< "  "<< "is the Dealer"<<endl;
+//	wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
+//	wcout << "shuffling deck ......" << endl;
+//	wcout << "Draw cards ......" << endl;
+//
+//	shuflleDeck(tempDeck);
+//
+//	
+//	vector<vector<Card>> totalHands;
+//	for (int k = 0; k < playerNum; k++)
+//	{
+//		vector<Card> hand;
+//		for (int i = 0; i < 6; i++) //2 person 6 cards
+//		{
+//			hand.push_back(drawCard(tempDeck));		
+//			tempPlayers[k].setHand(hand);	 // save to player.hand		
+//		}
+//		totalHands.push_back(hand); // save to fist board.firsthand 
+//	}
+//	tempBoard->setFirstHand(totalHands);
+//
+//	displayBoard(tempDeck, tempBoard, tempPlayers);
+//
+//	wcout << "Status: Creating the crib for the round." << endl;
+//	displayBoard(tempDeck, tempBoard, tempPlayers);
+//	for (int k = 0; k < playerNum; k++)
+//	{
+//		wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?" << endl;
+//		/*wcin >> intIn;
+//		while (!(wcin >> intIn) || intIn>4) {
+//			wcout << "you can only decare 2-4 players";
+//			wcin.clear();
+//			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+//		}*/
+//	}
+//}

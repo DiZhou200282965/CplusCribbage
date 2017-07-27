@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 const wstring CARD_NUM[] = { L"emp",L"A",L"2",L"3",L"4",L"5",L"6",L"7",L"8",L"9",L"10",L"J",L"Q",L"K" };
@@ -346,6 +347,40 @@ public:
 	void postGameProcess() {
 
 	}
+
+	//TEST SCORE CALCULATIONS
+	//***********************
+
+	//int fifteenHand(vector<vector<Card>> totalHands) {
+	//	int mark = 0;
+
+	//	return mark;
+	//}
+
+	//int fifteenCrib(vector<Card> crib) {
+
+	//	int mark = 0;
+	//	mark = subSetSum(crib, 15);
+	//	if (mark > 1) {
+	//		mark = 2;
+	//		cout << "Gained " << mark << " points" << endl;
+	//	}
+	//	return mark;
+	//}
+
+	int flush(vector<vector<Card>> totalHands) {
+
+	}
+	
+	int runs(vector<vector<Card>> totalHands) {
+
+	}
+
+
+
+
+
+	//***********************
 	
 	Board* getBoard() {
 		return myboard;

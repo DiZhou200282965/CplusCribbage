@@ -98,6 +98,12 @@ public:
 	vector<Card> getHand() {
 		return this->hand;
 	}
+	void emptyHandByIndex(int i) {
+		this->hand[i].setCard(0, 0);
+	}
+	void removeFromHand(int i) {
+		this->hand.erase(hand.begin()+i);
+	}
 	void setHand(vector<Card> hand) {
 		this->hand = hand;
 	}
@@ -144,18 +150,10 @@ public:
 		this->deck = deck;
 		this->players = players;
 		roundScore = 0;
-	}
-	void displayBoard() {
-
-	}
-	
-	void printScore() {
-	
-		wcout<< "Score: " << endl;
+	}	
+	void printScore() {	
 		for (int i = 0; i < this->players.size(); i++)
-		{
-			wcout << this->players[i].getPlayerName() << " :                 " << this->players[i].getScore()<<endl;
-		}			
+			wcout << this->players[i].getPlayerName() << " :                 " << this->players[i].getScore()<<endl;			
 	}
 	void setFirstHand(vector<vector<Card>> fh) {
 		this->playerHands = fh;
@@ -163,8 +161,8 @@ public:
 	vector<Card> getCrib() {
 		return this->crib;
 	}
-	void setCrib(vector<Card> crib) {
-		this->crib= crib;
+	void pushToCrib(Card c) {
+		this->crib.push_back(c);
 	}
 	Card getCut() {
 		return this->cut;
@@ -174,6 +172,13 @@ public:
 	}
 	vector<Card> getDeck() {
 		return this->deck;
+	}
+
+	vector<Card> getRoundPlay() {
+		return this->roundPlay;
+	}
+	void pushToRoundPlay(Card c) {
+		this->roundPlay.push_back(c);
 	}
 
 
@@ -190,6 +195,9 @@ public:
 	void setDealer(Player dealer) {
 		this->dealer = dealer;
 	}
+	wstring getDealerName() {
+		return this->dealer.getPlayerName();
+	}
 	bool isDealer(Player p) {
 		return p.getPlayerName() == dealer.getPlayerName();
 	}
@@ -204,10 +212,6 @@ private:
 	Player dealer;
 	int roundScore;
 };
-
-
-
-
 
 
 
@@ -323,7 +327,6 @@ Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck) {
 				p = tempPlayers[k];
 			}
 		}
-
 		if (counter>1)
 		{
 			tie = true;
@@ -346,9 +349,7 @@ public:
 	void postGameProcess() {
 
 	}
-	void pegging() {
-
-	}
+	
 	Board* getBoard() {
 		return myboard;
 	}
@@ -356,19 +357,19 @@ public:
 	void menu() {
 		greeting(); //greeting and create players
 		// temp variables declaration
-		Board *tempBoard = getBoard();
-		int playerNum = tempBoard->getPlayers().size();
-		vector<Player> tempPlayers = tempBoard->getPlayers();
-		vector<Card> tempDeck = tempBoard->getDeck();
+		
+		int playerNum = myboard->getPlayers().size();
+		vector<Player> tempPlayers = myboard->getPlayers();
+		vector<Card> tempDeck = myboard->getDeck();
 
 		wcout << "Players please take your seats." << endl;
 		//*************** Compare biggest cut   int biggestCutValue=0;
 
 		wcout << L"Status: The match is ready to start." << endl;
 		wcout << "The deck has been cut with the following results. " << endl;
-
-
-		wcout << endl << cutProcess(tempPlayers, tempDeck).getPlayerName() << "  " << "is the Dealer" << endl;
+		Player dealer = cutProcess(tempPlayers, tempDeck);
+		myboard->setDealer(dealer);
+		wcout << endl << dealer.getPlayerName() << "  " << "is the Dealer" << endl;
 		wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
 		wcout << "shuffling deck ......" << endl;
 		wcout << "Draw cards ......" << endl;
@@ -380,40 +381,81 @@ public:
 		for (int k = 0; k < playerNum; k++)
 		{
 			vector<Card> hand;
-			for (int i = 0; i < 6; i++) //2 person 6 cards
+			for (int i = 0; i < drawNum; i++) // use draw num
 			{
 				hand.push_back(drawCard(tempDeck));
 				tempPlayers[k].setHand(hand);	 // save to player.hand		
 			}
 			totalHands.push_back(hand); // save to fist board.firsthand 
 		}
-		tempBoard->setFirstHand(totalHands);
+		myboard->setFirstHand(totalHands);
 
-		displayBoard(tempDeck, tempBoard, tempPlayers);
+		displayBoard(tempDeck, myboard, tempPlayers);
 
 		wcout << "Status: Creating the crib for the round." << endl;
-		displayBoard(tempDeck, tempBoard, tempPlayers);
-		for (int k = 0; k < playerNum; k++)
+		
+
+		int pHandsize, intIn;
+		for (int k = 0; k < playerNum; k++) // loop players
 		{
-			wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?" << endl;
-			/*wcin >> intIn;
-			while (!(wcin >> intIn) || intIn>4) {
-			wcout << "you can only decare 2-4 players";
-			wcin.clear();
-			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}*/
-		}
+			displayBoard(tempDeck, myboard, tempPlayers);
+			pHandsize = tempPlayers[k].getHand().size(); // get hand size
+		
+			for (int i = 0; i < toCribNum; i++)  // loop toCribNum
+			{
+				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize<< endl;
+				while (!(wcin >> intIn) || intIn>pHandsize|| tempPlayers[k].getHand()[intIn-1].getCardIndexValue() ==0) {
+					if (intIn>pHandsize)
+					{
+						wcout << "you must choose between 1~" << pHandsize << ",no alphabet character allowed";
+					}
+				/*	else if (intIn<pHandsize&&tempPlayers[k].getHand()[intIn - 1].getCardIndexValue() == 0)
+					{
+							wcout << "you can't play empty card";
+					} 			*/						
+					wcin.clear();
+					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+				myboard->pushToCrib(tempPlayers[k].getHand()[intIn-1]); // push to crib vector
+				wcout << tempPlayers[k].getPlayerName() << " played ";
+				tempPlayers[k].getHand()[intIn - 1].display(); wcout << endl;
+				tempPlayers[k].removeFromHand(intIn-1);
+			}				
+		}	
+// dealer cut
+		Card cc = drawCard(tempDeck);
+		myboard->setCut(cc);
+		displayBoard(tempDeck, myboard, tempPlayers);
+		wcout << "Status: "<< dealer.getPlayerName()<<" cut the deck revealing the ";
+		cc.display();
+		wcout << "\nStatus : The round pegging can now commence." <<endl;	
+		pegging(tempDeck, tempPlayers);
 	}
 	;
 private:
-	int drawNum, toCrib, fromDeck;
+	int drawNum, toCribNum, fromDeckNum;
 	int totalScore;
 	Board *myboard;
 	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
+		wcout << wstring(2, '\n');
 		system("pause");
 		system("cls");
 		wcout << "  --------------------Deck section  ------------------------------  \n" << endl;
-		displayDeck(tempDeck);
+		wcout << " Cut : ";
+		tempBoard->getCut().display();
+		wcout << "\n Crib : ";
+		if (tempBoard->getCrib().empty())
+		{
+			wcout << "none";
+		}
+		else {
+			for (int i = 0; i < tempBoard->getCrib().size(); i++)
+			{
+				tempBoard->getCrib()[i].display();
+			}
+		}	
+		wcout << endl;
+		//displayDeck(tempDeck);
 		wcout << endl << "  -------------------- Score  section  ------------------------------\n" << endl;
 		tempBoard->printScore();
 		wcout << endl << "  -------------------- player's hand   ------------------------------ \n" << endl;
@@ -423,6 +465,21 @@ private:
 			tempPlayers[k].printHand();
 			wcout << endl << endl;
 		}
+		
+			if (!tempBoard->getRoundPlay().empty())
+		{
+	wcout << endl << "  -------------------- Round Played hand   ------------------------------ \n" << endl;
+	wcout << "Round Play: ";
+				for (int i = 0; i < tempBoard->getRoundPlay().size(); i++)
+				{
+					tempBoard->getRoundPlay()[i].display();
+				}
+		}
+		
+		
+	}
+	void pegging(vector<Card> tempDeck, vector<Player> tempPlayers) {
+		displayBoard(tempDeck, myboard, tempPlayers);
 
 	}
 	void greeting() {
@@ -437,20 +494,20 @@ private:
 		if (intIn == 2)
 		{
 			drawNum = 6;
-			toCrib = 2;
-			fromDeck = 0;
+			toCribNum = 2;
+			fromDeckNum = 0;
 		}
 		else if (intIn == 3)
 		{
 			drawNum = 5;
-			toCrib = 1;
-			fromDeck = 0;
+			toCribNum = 1;
+			fromDeckNum = 0;
 		}
 		else if (intIn == 4)
 		{
 			drawNum = 5;
-			toCrib = 1;
-			fromDeck = 0;
+			toCribNum = 1;
+			fromDeckNum = 0;
 		}
 		wchar_t str[50];
 		wstring wstr;
@@ -480,9 +537,7 @@ int main() {
 	Card cutDeck(vector<Card>&deck);
 	void shuflleDeck(vector<Card> deck);
 	Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck);
-	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers);
-
-
+	
 
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	srand(time(NULL));

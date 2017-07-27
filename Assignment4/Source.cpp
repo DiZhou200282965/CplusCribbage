@@ -338,9 +338,6 @@ Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck) {
 }
 
 
-
-
-
 class Game {
 public:
 	Game(Board& myboard) {
@@ -388,12 +385,12 @@ public:
 			}
 			totalHands.push_back(hand); // save to fist board.firsthand 
 		}
+
 		myboard->setFirstHand(totalHands);
 
 		displayBoard(tempDeck, myboard, tempPlayers);
 
-		wcout << "Status: Creating the crib for the round." << endl;
-		
+		wcout << "Status: Creating the crib for the round." << endl;		
 
 		int pHandsize, intIn;
 		for (int k = 0; k < playerNum; k++) // loop players
@@ -407,7 +404,7 @@ public:
 				while (!(wcin >> intIn) || intIn>pHandsize) {
 					if (intIn>pHandsize)
 					{
-						wcout << "you must choose between 1~" << pHandsize << ",no alphabet character allowed";
+						wcout << "you must choose between 1~" << pHandsize << ", no alphabet character allowed";
 					}									
 					wcin.clear();
 					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -465,9 +462,9 @@ private:
 		}	
 		wcout << endl;
 		//displayDeck(tempDeck);
-		wcout << endl << "  -------------------- Score  section  ------------------------------\n" << endl;
+		wcout << endl << "  -------------------- Score section  ------------------------------- \n" << endl;
 		tempBoard->printScore();
-		wcout << endl << "  -------------------- player's hand   ------------------------------ \n" << endl;
+		wcout << endl << "  -------------------- Player's hand   ------------------------------ \n" << endl;
 		for (int k = 0; k < tempPlayers.size(); k++)
 		{
 			wcout << tempPlayers[k].getPlayerName() << ": ";
@@ -531,10 +528,6 @@ private:
 		}
 	}
 };
-
-
-
-
 
 
 int main() {

@@ -352,74 +352,14 @@ public:
 	Board* getBoard() {
 		return myboard;
 	}
-	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
-		system("pause");
-		system("cls");
-		wcout << "  --------------------Deck section  ------------------------------  \n" << endl;
-		displayDeck(tempDeck);
-		wcout << endl << "  -------------------- Score  section  ------------------------------\n" << endl;
-		tempBoard->printScore();
-		wcout << endl << "  -------------------- player's hand   ------------------------------ \n" << endl;
-		for (int k = 0; k < tempPlayers.size(); k++)
-		{
-			wcout << tempPlayers[k].getPlayerName() << ": ";
-			tempPlayers[k].printHand();
-			wcout << endl << endl;
-		}
-
-	}
+	
 	void menu() {
-
-		int drawNum, toCrib, fromDeck;
-
-		//bool flag = true;
-		//while (flag) {
-		int intIn;
-
-		wcout << L"\n Welcome to Cribbage Game" << endl;
-		wcout << L"Declare how many players" << endl;
-		while (!(wcin >> intIn) || intIn>4) {
-			wcout << "you can only decare 2-4 players";
-			wcin.clear();
-			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-		}
-		if (intIn == 2)
-		{
-			drawNum = 6;
-			toCrib = 2;
-			fromDeck = 0;
-		}
-		else if (intIn == 3)
-		{
-			drawNum = 5;
-			toCrib = 1;
-			fromDeck = 0;
-		}
-		else if (intIn == 4)
-		{
-			drawNum = 5;
-			toCrib = 1;
-			fromDeck = 0;
-		}
-		wchar_t str[50];
-		wstring wstr;
-		for (int i = 0; i < intIn; i++)
-		{
-			wcout << "Player " << i << ",please enter Name " << endl;
-			ws(wcin); // get rid of space
-			wcin.getline(str, 50);
-			wstr = str;
-			Player tempPlayer(str);
-			getBoard()->addToPlayers(tempPlayer);
-		}
-
-
+		greeting(); //greeting and create players
 		// temp variables declaration
 		Board *tempBoard = getBoard();
 		int playerNum = tempBoard->getPlayers().size();
 		vector<Player> tempPlayers = tempBoard->getPlayers();
 		vector<Card> tempDeck = tempBoard->getDeck();
-
 
 		wcout << "Players please take your seats." << endl;
 		//*************** Compare biggest cut   int biggestCutValue=0;
@@ -466,8 +406,64 @@ public:
 	}
 	;
 private:
+	int drawNum, toCrib, fromDeck;
 	int totalScore;
 	Board *myboard;
+	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
+		system("pause");
+		system("cls");
+		wcout << "  --------------------Deck section  ------------------------------  \n" << endl;
+		displayDeck(tempDeck);
+		wcout << endl << "  -------------------- Score  section  ------------------------------\n" << endl;
+		tempBoard->printScore();
+		wcout << endl << "  -------------------- player's hand   ------------------------------ \n" << endl;
+		for (int k = 0; k < tempPlayers.size(); k++)
+		{
+			wcout << tempPlayers[k].getPlayerName() << ": ";
+			tempPlayers[k].printHand();
+			wcout << endl << endl;
+		}
+
+	}
+	void greeting() {
+		int intIn;
+		wcout << L"\n Welcome to Cribbage in C++.  Press Q at any time to quit." << endl;
+		wcout << L"How many players are there (2, 3, or 4)? " << endl;
+		while (!(wcin >> intIn) || intIn>4) {
+			wcout << "you can only decare 2-4 players";
+			wcin.clear();
+			wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+		if (intIn == 2)
+		{
+			drawNum = 6;
+			toCrib = 2;
+			fromDeck = 0;
+		}
+		else if (intIn == 3)
+		{
+			drawNum = 5;
+			toCrib = 1;
+			fromDeck = 0;
+		}
+		else if (intIn == 4)
+		{
+			drawNum = 5;
+			toCrib = 1;
+			fromDeck = 0;
+		}
+		wchar_t str[50];
+		wstring wstr;
+		for (int i = 0; i < intIn; i++)
+		{
+			wcout << "Player " << i << ",please enter Name " << endl;
+			ws(wcin); // get rid of space
+			wcin.getline(str, 50);
+			wstr = str;
+			Player tempPlayer(str);
+			getBoard()->addToPlayers(tempPlayer);
+		}
+	}
 };
 
 

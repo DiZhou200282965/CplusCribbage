@@ -399,20 +399,16 @@ public:
 		for (int k = 0; k < playerNum; k++) // loop players
 		{
 			displayBoard(tempDeck, myboard, tempPlayers);
-			pHandsize = tempPlayers[k].getHand().size(); // get hand size
-		
+			pHandsize = tempPlayers[k].getHand().size(); // get hand size			
 			for (int i = 0; i < toCribNum; i++)  // loop toCribNum
 			{
+				displayBoard(tempDeck, myboard, tempPlayers);
 				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize<< endl;
-				while (!(wcin >> intIn) || intIn>pHandsize|| tempPlayers[k].getHand()[intIn-1].getCardIndexValue() ==0) {
+				while (!(wcin >> intIn) || intIn>pHandsize) {
 					if (intIn>pHandsize)
 					{
 						wcout << "you must choose between 1~" << pHandsize << ",no alphabet character allowed";
-					}
-				/*	else if (intIn<pHandsize&&tempPlayers[k].getHand()[intIn - 1].getCardIndexValue() == 0)
-					{
-							wcout << "you can't play empty card";
-					} 			*/						
+					}									
 					wcin.clear();
 					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
 				}
@@ -421,13 +417,26 @@ public:
 				tempPlayers[k].getHand()[intIn - 1].display(); wcout << endl;
 				tempPlayers[k].removeFromHand(intIn-1);
 			}				
-		}	
-// dealer cut
-		Card cc = drawCard(tempDeck);
-		myboard->setCut(cc);
+		}
 		displayBoard(tempDeck, myboard, tempPlayers);
+		
+		if (fromDeckNum==1)
+		{
+			Card c = drawCard(tempDeck);
+			c = drawCard(tempDeck);
+			c.display();
+			wcout << "was cut from deck to Crib(3 players)"<<endl;
+			myboard->pushToCrib(c);
+		}
+
+		//cc.~Card;
+		Card tc = drawCard(tempDeck);
+		myboard->setCut(tc);
+	
+
+		// dealer cut
 		wcout << "Status: "<< dealer.getPlayerName()<<" cut the deck revealing the ";
-		cc.display();
+		tc.display();
 		wcout << "\nStatus : The round pegging can now commence." <<endl;	
 		pegging(tempDeck, tempPlayers);
 	}
@@ -437,8 +446,8 @@ private:
 	int totalScore;
 	Board *myboard;
 	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
-		wcout << wstring(2, '\n');
 		system("pause");
+		wcout << wstring(2, '\n');	
 		system("cls");
 		wcout << "  --------------------Deck section  ------------------------------  \n" << endl;
 		wcout << " Cut : ";
@@ -476,7 +485,7 @@ private:
 				}
 		}
 		
-		
+	
 	}
 	void pegging(vector<Card> tempDeck, vector<Player> tempPlayers) {
 		displayBoard(tempDeck, myboard, tempPlayers);
@@ -501,7 +510,7 @@ private:
 		{
 			drawNum = 5;
 			toCribNum = 1;
-			fromDeckNum = 0;
+			fromDeckNum = 1;
 		}
 		else if (intIn == 4)
 		{

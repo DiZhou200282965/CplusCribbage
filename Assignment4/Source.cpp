@@ -175,22 +175,18 @@ public:
 	vector<Card> getDeck() {
 		return this->deck;
 	}
-
 	vector<Card> getRoundPlay() {
 		return this->roundPlay;
 	}
 	void pushToRoundPlay(Card c) {
 		this->roundPlay.push_back(c);
 	}
-
-
 	vector<Player> getPlayers() {
 		return this->players;
 	}
 	void addToPlayers(Player p) {
 		this->players.push_back(p);
 	}
-
 	int getRoundScore() {
 		return roundScore;
 	}
@@ -352,9 +348,9 @@ public:
 	//TEST SCORE CALCULATIONS
 	//***********************
 	
-	//int updateMark(points) {
+	////int updateMark(points) {
 
-	//}
+	////}
 
 	//int fifteenHand(vector<vector<Card>> totalHands) {
 	//	int points = 0;
@@ -362,22 +358,21 @@ public:
 	//	//updateMark(points);
 	//}
 
-	// //I need to pass the current board... not the crib
-	//int fifteenCrib(vector<Card> crib) {
-
-	//	int points = 0;
-	//	int sum = accumulate(crib.begin(), crib.end(), 0);
-	//	if (sum == 15) {
-	//		points = 2;
-	//		cout << "Gained " << points << " points" << endl;
-	//		go();
-	//	}
-	//	else if (sum == 31){
-	//		points = 2;
-	//		cout << "Gained " << points << " points" << endl;
-	//		//Dont include go
-	//	}
-	//	//updateMark(points);
+	//int fifteenBoard(vector<Card> roundPlay) {
+	//	cout << tempBoard->getRoundPlay() << endl;
+	//	//int points = 0;
+	//	//int sum = accumulate(roundPlay.begin(), roundPlay.end(), 0);
+	//	//if (sum == 15) {
+	//	//	points = 2;
+	//	//	wcout << "Gained " << points << " points" << endl;
+	//	//	go();
+	//	//}
+	//	//else if (sum == 31){
+	//	//	points = 2;
+	//	//	wcout << "Gained " << points << " points" << endl;
+	//	//	//Dont include go
+	//	//}
+	//	////updateMark(points);
 	//}
 
 	//int pair(vector<vector<Card>> totalHands) {
@@ -439,7 +434,7 @@ public:
 				hand.push_back(drawCard(tempDeck));
 				tempPlayers[k].setHand(hand);	 // save to player.hand		
 			}
-			totalHands.push_back(hand); // save to fist board.firsthand 
+			totalHands.push_back(hand); // save to first board.firsthand 
 		}
 
 		myboard->setFirstHand(totalHands);
@@ -456,7 +451,7 @@ public:
 			for (int i = 0; i < toCribNum; i++)  // loop toCribNum
 			{
 				displayBoard(tempDeck, myboard, tempPlayers);
-				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize << ")" << endl;
+				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib? (input by order, between 1~" << pHandsize << ")" << endl;
 				while (!(wcin >> intIn) || intIn>pHandsize) {
 					if (intIn>pHandsize)
 					{

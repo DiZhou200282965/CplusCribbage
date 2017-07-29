@@ -575,11 +575,11 @@ private:
 		while (canPegging) {			
 			displayBoard(tempDeck, myboard, tempPlayers);
 			pHandsize = tempPlayers[k].getHand().size(); // get hand size			
-			if (canPlay(tempPlayers[k].getHand()) || pHandsize!=0)
-			{
+			if (canPlay(tempPlayers[k].getHand()) && pHandsize!=0)
+			{				
 				wcout <<endl << tempPlayers[k].getPlayerName() << ", what card would you like to play?(input by order, between 1~" << pHandsize << ")" << endl;
-				while (!(wcin >> intIn) || intIn>pHandsize) {
-					if (intIn>pHandsize)
+				while (!(wcin >> intIn) || intIn>pHandsize|| intIn <1) {
+					if (intIn>pHandsize|| intIn <1)
 					{
 						wcout << "you must choose between 1~" << pHandsize << ", no alphabet character allowed";
 					}
@@ -593,6 +593,7 @@ private:
 			}
 			else {
 				// player can't play card ,go
+				wcout << tempPlayers[k].getPlayerName() << " GO";
 			}
 			
 			if (++k>=tempPlayers.size())

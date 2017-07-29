@@ -166,6 +166,9 @@ public:
 	void pushToCrib(Card c) {
 		this->crib.push_back(c);
 	}
+	void pushToRoundPlay(Card c) {
+		this->roundPlay.push_back(c);
+	}
 	Card getCut() {
 		return this->cut;
 	}
@@ -178,9 +181,15 @@ public:
 	vector<Card> getRoundPlay() {
 		return this->roundPlay;
 	}
+<<<<<<< HEAD
 	void pushToRoundPlay(Card c) {
 		this->roundPlay.push_back(c);
 	}
+=======
+	
+
+
+>>>>>>> 3e912c6b10b09b670d3033ed6aec74a8095ba147
 	vector<Player> getPlayers() {
 		return this->players;
 	}
@@ -401,7 +410,30 @@ public:
 	Board* getBoard() {
 		return myboard;
 	}
-	
+	bool canPlay(vector<Card> hand) {
+		//myboard->getRoundPlay();   // get total points
+		return true;
+	}
+	void setLastPlay(Player p,vector<Player> ps){
+		// figure next player
+		for (int i = 0; i < ps.size(); i++)
+		{
+
+			if (ps[i].getPlayerName() == p.getPlayerName())
+			{
+				lastPlay = i;
+			}
+		}
+	}
+	int getNextPlay(int lastPlay, vector<Player> ps) {
+		int nextPlay;
+		if ((lastPlay + 1) == ps.size()) nextPlay = 0;
+		else nextPlay = lastPlay + 1;
+		return nextPlay;
+	}
+	 int getLastPlay() {
+		return lastPlay;
+	}
 	void menu() {
 		greeting(); //greeting and create players
 		// temp variables declaration
@@ -485,12 +517,14 @@ public:
 		// dealer cut
 		wcout << "Status: "<< dealer.getPlayerName()<<" cut the deck revealing the ";
 		tc.display();
+		setLastPlay(dealer, tempPlayers);
 		wcout << "\nStatus : The round pegging can now commence." <<endl;	
 		pegging(tempDeck, tempPlayers);
 	}
 	;
 private:
 	int drawNum, toCribNum, fromDeckNum;
+	int lastPlay;
 	int totalScore;
 	Board *myboard;
 	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
@@ -518,7 +552,9 @@ private:
 		wcout << endl << "  -------------------- Player's hand   ------------------------------ \n" << endl;
 		for (int k = 0; k < tempPlayers.size(); k++)
 		{
-			wcout << tempPlayers[k].getPlayerName() << ": ";
+			wcout << tempPlayers[k].getPlayerName();
+			if (myboard->isDealer(tempPlayers[k].getPlayerName())) wcout << " <D> ";
+			wcout<< ": ";
 			tempPlayers[k].printHand();
 			wcout << endl << endl;
 		}
@@ -535,9 +571,39 @@ private:
 		
 	
 	}
-	void pegging(vector<Card> tempDeck, vector<Player> tempPlayers) {
-		displayBoard(tempDeck, myboard, tempPlayers);
-
+	void pegging(vector<Card> tempDeck, vector<Player> tempPlayers) {	
+		
+		int pHandsize, intIn,k= getNextPlay(getLastPlay(), tempPlayers);
+		bool canPegging = true;
+		while (canPegging) {			
+			displayBoard(tempDeck, myboard, tempPlayers);
+			pHandsize = tempPlayers[k].getHand().size(); // get hand size			
+			if (canPlay(tempPlayers[k].getHand()) && pHandsize!=0)
+			{				
+				wcout <<endl << tempPlayers[k].getPlayerName() << ", what card would you like to play?(input by order, between 1~" << pHandsize << ")" << endl;
+				while (!(wcin >> intIn) || intIn>pHandsize|| intIn <1) {
+					if (intIn>pHandsize|| intIn <1)
+					{
+						wcout << "you must choose between 1~" << pHandsize << ", no alphabet character allowed";
+					}
+					wcin.clear();
+					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+				myboard->pushToRoundPlay(tempPlayers[k].getHand()[intIn - 1]); // push to roundplay vector
+				wcout << tempPlayers[k].getPlayerName() << " played ";
+				tempPlayers[k].getHand()[intIn - 1].display(); wcout << endl;
+				tempPlayers[k].removeFromHand(intIn - 1);
+			}
+			else {
+				// player can't play card ,go
+				wcout << tempPlayers[k].getPlayerName() << " GO";
+			}
+			
+			if (++k>=tempPlayers.size())
+			{
+				k = 0;
+			}
+		}
 	}
 	void greeting() {
 		int intIn;

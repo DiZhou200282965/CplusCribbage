@@ -181,15 +181,6 @@ public:
 	vector<Card> getRoundPlay() {
 		return this->roundPlay;
 	}
-<<<<<<< HEAD
-	void pushToRoundPlay(Card c) {
-		this->roundPlay.push_back(c);
-	}
-=======
-	
-
-
->>>>>>> 3e912c6b10b09b670d3033ed6aec74a8095ba147
 	vector<Player> getPlayers() {
 		return this->players;
 	}

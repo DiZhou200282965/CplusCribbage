@@ -5,7 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <cmath>
+#include <numeric>
+
 
 using namespace std;
 const wstring CARD_NUM[] = { L"emp",L"A",L"2",L"3",L"4",L"5",L"6",L"7",L"8",L"9",L"10",L"J",L"Q",L"K" };
@@ -350,34 +351,53 @@ public:
 
 	//TEST SCORE CALCULATIONS
 	//***********************
+	
+	//int updateMark(points) {
+
+	//}
 
 	//int fifteenHand(vector<vector<Card>> totalHands) {
-	//	int mark = 0;
+	//	int points = 0;
 
-	//	return mark;
+	//	//updateMark(points);
 	//}
 
 	//int fifteenCrib(vector<Card> crib) {
 
-	//	int mark = 0;
-	//	mark = subSetSum(crib, 15);
-	//	if (mark > 1) {
-	//		mark = 2;
-	//		cout << "Gained " << mark << " points" << endl;
+	//	int points = 0;
+	//	int sum = accumulate(crib.begin(), crib.end(), 0);
+	//	if (sum == 15) {
+	//		points = 2;
+	//		cout << "Gained " << points << " points" << endl;
+	//		go();
 	//	}
-	//	return mark;
+	//	else if (sum == 31){
+	//		points = 2;
+	//		cout << "Gained " << points << " points" << endl;
+	//		//Dont include go
+	//	}
+	//	//updateMark(points);
 	//}
 
-	int flush(vector<vector<Card>> totalHands) {
+	//int pair(vector<vector<Card>> totalHands) {
+	//	int points;
+	//	//updateMark(points);
+	//}
 
-	}
-	
-	int runs(vector<vector<Card>> totalHands) {
+	//int flush(vector<vector<Card>> totalHands) {
+	//	int points;
+	//	//updateMark(points);
+	//}
+	//
+	//int runs(vector<vector<Card>> totalHands) {
+	//	int points;
+	//	//updateMark(points);
+	//}
 
-	}
-
-
-
+	//int go() { //pass last person 
+	//	int points;
+	//	//updateMark(points);
+	//}
 
 
 	//***********************
@@ -401,7 +421,7 @@ public:
 		wcout << "The deck has been cut with the following results. " << endl;
 		Player dealer = cutProcess(tempPlayers, tempDeck);
 		myboard->setDealer(dealer);
-		wcout << endl << dealer.getPlayerName() << "  " << "is the Dealer" << endl;
+		wcout << endl << dealer.getPlayerName() << " " << "is the Dealer" << endl;
 		wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
 		wcout << "shuffling deck ......" << endl;
 		wcout << "Draw cards ......" << endl;
@@ -435,7 +455,7 @@ public:
 			for (int i = 0; i < toCribNum; i++)  // loop toCribNum
 			{
 				displayBoard(tempDeck, myboard, tempPlayers);
-				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize<< endl;
+				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize << ")" << endl;
 				while (!(wcin >> intIn) || intIn>pHandsize) {
 					if (intIn>pHandsize)
 					{
@@ -554,7 +574,7 @@ private:
 		wstring wstr;
 		for (int i = 0; i < intIn; i++)
 		{
-			wcout << "Player " << i << ",please enter Name " << endl;
+			wcout << "Player " << i + 1 << ", please enter your name" << endl;
 			ws(wcin); // get rid of space
 			wcin.getline(str, 50);
 			wstr = str;

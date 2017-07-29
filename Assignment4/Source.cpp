@@ -362,6 +362,7 @@ public:
 	//	//updateMark(points);
 	//}
 
+	// //I need to pass the current board... not the crib
 	//int fifteenCrib(vector<Card> crib) {
 
 	//	int points = 0;

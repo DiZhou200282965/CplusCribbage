@@ -439,7 +439,7 @@ public:
 		shuflleDeck(tempDeck);
 		wcout << endl << dealer.getPlayerName() << " " << "is the Dealer" << endl;
 		wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
-		wcout << "shuffling deck ......" << endl;
+		wcout << "Shuffling deck ......" << endl;
 		wcout << "Draw cards ......" << endl;
 
 		vector<vector<Card>> totalHands;
@@ -468,7 +468,7 @@ public:
 			for (int i = 0; i < toCribNum; i++)  // loop toCribNum
 			{
 				displayBoard(tempDeck, myboard, tempPlayers);
-				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib?(input by order, between 1~" << pHandsize << ")" << endl;
+				wcout << tempPlayers[k].getPlayerName() << ", what card would you like to discard to the Crib? (input by order, between 1~" << pHandsize << ")" << endl;
 				while (!(wcin >> intIn) || intIn>pHandsize || intIn<1) {
 					if (intIn>pHandsize || intIn<1)
 					{
@@ -490,7 +490,7 @@ public:
 			Card c = drawCard(tempDeck);
 			c = drawCard(tempDeck);
 			c.display();
-			wcout << "was cut from deck to Crib(3 players)" << endl;
+			wcout << "was cut from deck to Crib (3 players)" << endl;
 			myboard->pushToCrib(c);
 		}
 
@@ -568,7 +568,7 @@ private:
 		system("pause");
 		wcout << wstring(2, '\n');
 		system("cls");
-		wcout << "  --------------------Deck section  ------------------------------  \n" << endl;
+		wcout << "  -------------------- Deck section  --------------------------------  \n" << endl;
 		wcout << " Cut : ";
 		tempBoard->getCut().display();
 		wcout << "\n Crib : ";
@@ -623,7 +623,7 @@ private:
 
 			if (canPlay(tempPlayers[k].getHand()) && pHandsize != 0)
 			{
-				wcout << endl << tempPlayers[k].getPlayerName() << ", what card would you like to play?(input by order, between 1~" << pHandsize << ")" << endl;
+				wcout << endl << tempPlayers[k].getPlayerName() << ", what card would you like to play? (input by order, between 1~" << pHandsize << ")" << endl;
 				while (!(wcin >> intIn) || intIn>pHandsize || intIn <1 || !(myboard->setRoundScore(tempPlayers[k].getHand()[intIn - 1]))) {
 					if (intIn>pHandsize || intIn <1)
 					{
@@ -647,7 +647,7 @@ private:
 					wcout << endl << tempPlayers[k].getPlayerName() << "has empty hand, " << " GO ";
 				}
 				else {
-					wcout << endl << tempPlayers[k].getPlayerName() << "can't play a card(sum more than 31), " << " GO ";
+					wcout << endl << tempPlayers[k].getPlayerName() << " can't play a card (sum more than 31), " << " GO " << endl;
 				}
 			}
 			gameCheck(myboard, tempPlayers);
@@ -660,7 +660,7 @@ private:
 
 	void game_greeting() {
 		int intIn;
-		wcout << L"\n Welcome to Cribbage in C++.  Press Q at any time to quit." << endl;
+		wcout << L"Welcome to Cribbage in C++.  Press Q at any time to quit." << endl;
 		wcout << L"How many players are there (2, 3, or 4)? " << endl;
 		while (!(wcin >> intIn) || intIn>4) {
 			wcout << "you can only decare 2-4 players";

@@ -350,7 +350,7 @@ public:
 	
 	////int updateMark(points) {
 
-	////}
+	//}
 
 	//int fifteenHand(vector<vector<Card>> totalHands) {
 	//	int points = 0;
@@ -359,21 +359,21 @@ public:
 	//}
 
 	//int fifteenBoard(vector<Card> roundPlay) {
-	//	cout << tempBoard->getRoundPlay() << endl;
-	//	//int points = 0;
-	//	//int sum = accumulate(roundPlay.begin(), roundPlay.end(), 0);
-	//	//if (sum == 15) {
-	//	//	points = 2;
-	//	//	wcout << "Gained " << points << " points" << endl;
-	//	//	go();
-	//	//}
-	//	//else if (sum == 31){
-	//	//	points = 2;
-	//	//	wcout << "Gained " << points << " points" << endl;
-	//	//	//Dont include go
-	//	//}
-	//	////updateMark(points);
-	//}
+
+	////	int points = 0;
+	////	int sum = accumulate(roundPlay.begin(), roundPlay.end(), 0);
+	////	if (sum == 15) {
+	////		points = 2;
+	////		wcout << "Gained " << points << " points" << endl;
+	////		go();
+	////	}
+	////	else if (sum == 31){
+	////		points = 2;
+	////		wcout << "Gained " << points << " points" << endl;
+	////		//Dont include go
+	////	}
+	////	//updateMark(points);
+	////}
 
 	//int pair(vector<vector<Card>> totalHands) {
 	//	int points;
@@ -393,7 +393,7 @@ public:
 	//int go() { //pass last person 
 	//	int points;
 	//	//updateMark(points);
-	//}
+	////}
 
 
 	//***********************

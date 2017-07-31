@@ -18,7 +18,7 @@ public:
 		this->cardNum = CARD_NUM[0];
 		suit = emp;
 		this->cardValue = 0;
-
+		suiteIndex = 0;
 	}
 	int  getCardIndexValue() {
 		return this->cardIndexValue;
@@ -47,7 +47,7 @@ public:
 		//wcout << L"(" << cardValue << L")";
 	}
 	void setCard(int suiteIndex, int cardNum) {
-
+		this->suiteIndex = suiteIndex;
 		if (suiteIndex == 1)
 		{
 			suit = club;
@@ -72,6 +72,9 @@ public:
 		cardIndexValue = cardNum;
 		this->cardValue = cardNum > 10 ? 10 : cardNum;
 	}
+	int getsuiteIndex() {
+		return this->suiteIndex;
+	}
 	wstring getCardNum() {
 		return this->cardNum;
 	}
@@ -84,6 +87,7 @@ private:
 	{
 		emp, club, diamond, heart, spade
 	};
+	int suiteIndex;
 	wstring cardNum;
 	SUITE suit;
 	int cardValue;
@@ -122,6 +126,9 @@ public:
 	int getScore() {
 		return this->score;
 	}
+	void addToScore(int add) {
+		this->score += add;
+	}
 	void setCut(Card c) {
 		cut = c;
 	}
@@ -143,6 +150,7 @@ public:
 	}
 	;
 private:
+	int suiteIndex;
 	wstring platerName;
 	bool statusGo;
 	vector<Card> hand;
@@ -160,12 +168,12 @@ public:
 		this->players = players;
 		roundScore = 0;
 	}
-	void printScore() {
-		for (int i = 0; i < this->players.size(); i++)
-			wcout << this->players[i].getPlayerName() << " :                 " << this->players[i].getScore() << endl;
-	}
+	
 	void setFirstHand(vector<vector<Card>> fh) {
 		this->playerHands = fh;
+	}
+	vector<vector<Card>> getFirstHand() {
+		return this->playerHands;
 	}
 	vector<Card> getCrib() {
 		return this->crib;
@@ -191,6 +199,9 @@ public:
 	}
 	void clearRoundPlay() {
 		this->roundPlay.clear();
+	}
+	void clearCrib() {
+		this->crib.clear();
 	}
 	vector<Player> getPlayers() {
 		return this->players;
@@ -221,6 +232,7 @@ public:
 
 	void setDealer(Player dealer) {
 		this->dealer = dealer;
+		wcout << endl << dealer.getPlayerName() << " " << "is the Dealer" << endl;
 	}
 	wstring getDealerName() {
 		return this->dealer.getPlayerName();
@@ -370,6 +382,7 @@ Player cutProcess(vector<Player>& tempPlayers, vector<Card>& tempDeck) {
 
 class Game {
 public:
+	bool gameFlag = true;
 	Game(Board& myboard) {
 		this->myboard = &myboard;
 	}
@@ -424,6 +437,9 @@ public:
 		}
 	}
 	void menu() {
+
+
+
 		game_greeting(); //greeting and create players
 
 						 // temp variables declaration		
@@ -436,13 +452,15 @@ public:
 		wcout << "The deck has been cut with the following results. " << endl;
 		Player dealer = cutProcess(tempPlayers, tempDeck);
 		myboard->setDealer(dealer);
-		shuflleDeck(tempDeck);
-		wcout << endl << dealer.getPlayerName() << " " << "is the Dealer" << endl;
+	
+		
 		wcout << "Status: The dealer will now shuffle the deck and start the match." << endl;
+	
+	
+	do{
 		wcout << "Shuffling deck ......" << endl;
-		wcout << "Draw cards ......" << endl;
-
-		vector<vector<Card>> totalHands;
+		shuflleDeck(tempDeck);
+		wcout << "Draw cards ......" << endl;	
 		for (int k = 0; k < playerNum; k++)
 		{
 			vector<Card> hand;
@@ -450,16 +468,12 @@ public:
 			{
 				hand.push_back(drawCard(tempDeck));
 				tempPlayers[k].setHand(hand);	 // save to player.hand		
-			}
-			totalHands.push_back(hand); // save to fist board.firsthand 
-		}
-
-		myboard->setFirstHand(totalHands);
-
+			}			
+		}	
+		
 		displayBoard(tempDeck, myboard, tempPlayers);
 
-		wcout << "Status: Creating the crib for the round." << endl;
-
+		wcout << "Status: Creating the crib for the round." << endl;	
 		int pHandsize, intIn;
 		for (int k = 0; k < playerNum; k++) // loop players
 		{
@@ -505,8 +519,125 @@ public:
 		setlastTurnPI(dealer, tempPlayers);
 		wcout << "\nStatus : The round pegging can now commence." << endl;
 
-		pegging(tempDeck, tempPlayers);
-	}
+
+		// save to fist hands
+		vector<vector<Card>> totalHands;
+		for (int i = 0; i < tempPlayers.size(); i++)
+		{
+			totalHands.push_back(tempPlayers[i].getHand()); // save to fist board.firsthand 	
+		}		
+		myboard->setFirstHand(totalHands);
+
+		
+
+
+		// Pegging
+		int k = getnextTurnPI(getlastTurnPI(), tempPlayers);
+		while (canPegging(tempPlayers)) {
+			displayBoard(tempDeck, myboard, tempPlayers);
+			pHandsize = tempPlayers[k].getHand().size(); // get hand size				
+
+			if (canPlay(tempPlayers[k].getHand()) && pHandsize != 0)
+			{
+				wcout << endl << tempPlayers[k].getPlayerName() << ", what card would you like to play? (input by order, between 1~" << pHandsize << ")" << endl;
+				while (!(wcin >> intIn) || intIn>pHandsize || intIn <1 || !(myboard->setRoundScore(tempPlayers[k].getHand()[intIn - 1]))) {
+					if (intIn>pHandsize || intIn <1)
+					{
+						wcout << "you must choose between 1~" << pHandsize << ", no alphabet character allowed";
+					}
+					wcin.clear();
+					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+
+				myboard->pushToRoundPlay(tempPlayers[k].getHand()[intIn - 1]); // push to roundplay vector			
+				wcout << tempPlayers[k].getPlayerName() << " played ";
+				tempPlayers[k].getHand()[intIn - 1].display(); wcout << endl;
+				tempPlayers[k].removeFromHand(intIn - 1);
+			
+				setLastPlayCarPI(tempPlayers[k], tempPlayers);			
+			}
+			else {
+				tempPlayers[k].setGoStatus();
+				// player can't play card ,go
+				if (pHandsize == 0)
+				{
+					wcout << endl << tempPlayers[k].getPlayerName() << "has empty hand, " << " GO ";
+				}
+				else {
+					wcout << endl << tempPlayers[k].getPlayerName() << " can't play a card (sum more than 31), " << " GO " << endl;
+				}
+			}
+
+
+			//game check
+			int counter = 0;
+			bool allGO;
+			for (int i = 0; i < tempPlayers.size(); i++)
+			{
+				if (tempPlayers[i].getGoStatus())
+				{
+					counter++;
+				}
+			}
+			if (counter == tempPlayers.size()) allGO = true;
+			else   allGO = false;
+			// check pairs, runs 15,31
+			pegging_sumUp(myboard->getRoundPlay(), tempPlayers);
+			pegging_pair(myboard->getRoundPlay(), tempPlayers);
+			pegging_run(myboard->getRoundPlay(), tempPlayers);
+
+		//	if (gameCheck(tempPlayers)) { break; }
+			
+		
+			if (myboard->getRoundScore() == 31 || allGO)
+			{
+				if (allGO)
+				{
+					wcout << "no one can play," << tempPlayers[getLastPlayCarPI()].getPlayerName() << " played last card" << endl;
+					tempPlayers[getLastPlayCarPI()].addToScore(1);
+					wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 1 point for last play card" << endl;
+				}
+				else  wcout << "round score reaches 31, clear round play" << endl;
+				myboard->setRoundScore(0);
+				myboard->clearRoundPlay();
+				/*wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " is the person who last played card " << endl;*/
+			}
+
+			if (++k >= tempPlayers.size())
+			{
+				k = 0;
+			}
+		}
+
+	  // post game process
+		wcout << "Status: All cards held by the players have been played.  Post-game counting to commence. " << endl;
+		for (int i = 0; i < playerNum; i++)
+		{
+			postGameDisplay(tempDeck, myboard, tempPlayers);
+			calPoints(myboard,tempPlayers);
+		}
+
+		myboard->clearRoundPlay();
+		myboard->setRoundScore(0);
+		myboard->clearCrib();	
+			int num;
+		for (int i = 0; i < tempPlayers.size(); i++)
+		{
+			if (tempPlayers[i].getPlayerName() == myboard->getDealer().getPlayerName())
+			{
+					num = i;
+					if (i= tempPlayers.size()-1)
+					{
+						num = 0;
+					}
+			}
+		}
+		//set dealer to next person
+		myboard->setDealer(tempPlayers[num + 1]);
+	
+}while(gameFlag);
+} 
+
 	;
 private:
 	int drawNum, toCribNum, fromDeckNum;
@@ -514,31 +645,77 @@ private:
 	int lastPlayCardPI;
 	int totalScore;
 	Board *myboard;
-	void gameCheck(Board *tempBoard, vector<Player> tempPlayers) {
-
-		int counter = 0;
-		bool allGO;
+	void calPoints(Board *myboard, vector<Player> tempPlayers){
+		vector<int> nums;
 		for (int i = 0; i < tempPlayers.size(); i++)
 		{
-			if (tempPlayers[i].getGoStatus())
+			
+			//tempBoard->getCut();
+			//myboard->getCrib();
+			vector<Card> pHand = myboard->getFirstHand()[i];//  players hand
+			
+			nums.push_back(myboard->getCut().getCardValue());
+			for (int i = 0; i < pHand.size(); i++)
 			{
-				counter++;
-			}
-		}
-		if (counter == tempPlayers.size()) allGO = true;
-		else   allGO = false;
-		// check pairs, runs 15,31
-		if (tempBoard->getRoundScore() == 31 || allGO)
+				nums.push_back(pHand[i].getCardValue());
+			}	
+		};
+		wcout << "Post game calculation is in construction!" << endl;
+	/*	check15();
+		checkPair();
+		checkFlush();
+		addd point to player
+		*/
+
+		//for crib 
+		nums.clear();
+		nums.push_back(myboard->getCut().getCardValue());
+		for (int i = 0; i < myboard->getCrib().size(); i++)
 		{
-			if (allGO)
-				wcout << "no one can play," << tempPlayers[getLastPlayCarPI()].getPlayerName() << " played last card" << endl;
-			else  wcout << "round score reaches 31, clear round play" << endl;
-			tempBoard->setRoundScore(0);
-			tempBoard->clearRoundPlay();
-			/*wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " is the person who last played card " << endl;*/
+			nums.push_back(myboard->getCrib()[i].getCardValue());
 		}
-
-
+		/*	check15();
+		checkPair();
+		checkFlush();
+		addd point to dealer
+		*/
+		
+		
+	}
+	
+	void pegging_run(vector<Card> roundPlay, vector<Player> &tempPlayers) {
+		wcout <<  " peggin run checking still in construction !" << endl;
+	}
+	void pegging_pair(vector<Card> roundPlay, vector<Player> &tempPlayers) {
+		int lastCardIndex = roundPlay[roundPlay.size() - 1].getCardIndexValue();
+		//check if pair 
+		if (roundPlay.size()>=2 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue())
+		{
+			tempPlayers[getLastPlayCarPI()].addToScore(2);
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 2 point for pair" << endl;
+		}		
+		if (roundPlay.size() >= 3 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue() && roundPlay[roundPlay.size() - 2].getCardIndexValue() == roundPlay[roundPlay.size() - 3].getCardIndexValue())
+		{
+			tempPlayers[getLastPlayCarPI()].addToScore(6);
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 6 point for royal pair!" << endl;
+		}
+		if (roundPlay.size()>=4 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue() && roundPlay[roundPlay.size() - 2].getCardIndexValue() == roundPlay[roundPlay.size() - 3].getCardIndexValue())
+		{
+			tempPlayers[getLastPlayCarPI()].addToScore(12);
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 12 point for double pair royal !!!" << endl;
+		}
+	}
+	void pegging_sumUp(vector<Card> roundPlay,vector<Player> &tempPlayers) {
+		int sum=0;
+		for (int i = 0; i < roundPlay.size(); i++)
+		{
+			sum += roundPlay[i].getCardValue();
+		}	
+		if (sum == 15 || sum == 31) {
+			tempPlayers[getLastPlayCarPI()].addToScore(2);
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 2 point for 15 or 31" << endl;
+		}
+		
 	}
 	bool canPegging(vector<Player> tempPlayers) {
 
@@ -550,19 +727,47 @@ private:
 				counter++;
 			}
 		}
-		if (counter == tempPlayers.size()) return false;
-		else  return true;
-		//	//checkAllPlayersStatus
-		//	int counter = 0;
-		//for (int i = 0; i < tempPlayers.size(); i++)
-		//	{
-		//		if (tempPlayers[i].getGoStatus())
-		//		{
-		//			counter++;
-		//		}		
-		//	}
-		//if (counter== tempPlayers.size()) return false;
-		//else  return true;
+		if (counter == tempPlayers.size()) {	
+			return false;
+
+		}
+		else  return true;	
+	}
+	bool gameCheck(vector<Player>tempPlayers) {
+		bool myBool = true;
+		for (int i = 0; i < tempPlayers.size(); i++)
+		{
+			if (tempPlayers[i].getScore() >= 121)
+				myBool = false;
+		}
+		return myBool;
+
+	}
+	void postGameDisplay(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
+		system("pause");
+		system("cls");
+		vector<vector<Card>> hands = myboard->getFirstHand();
+		wcout << "  --------------------  Post-game counting --------------------------------  \n" << endl;
+		wcout << " Cut : ";
+		myboard->getCut().display();
+		wcout << "\n\n Crib : ";
+		for (int i = 0; i < myboard->getCrib().size(); i++)
+		{
+			myboard->getCrib()[i].display();
+		}
+		wcout << endl << endl;
+		for (int i = 0; i < hands.size(); i++)
+		{
+			wcout << "Player  " << tempPlayers[i].getPlayerName() << "'s hand: ";
+			for (int k = 0; k < hands[i].size(); k++)
+			{
+				hands[i][k].display();
+			}
+			wcout << endl << endl;
+		}
+		wcout << endl << "  -------------------- Score section  ------------------------------- \n" << endl;
+		for (int i = 0; i < tempPlayers.size(); i++)
+			wcout <<tempPlayers[i].getPlayerName() << " :                 " << tempPlayers[i].getScore() << endl;
 	}
 	void displayBoard(vector<Card>tempDeck, Board *tempBoard, vector<Player>tempPlayers) {
 		system("pause");
@@ -585,7 +790,8 @@ private:
 		wcout << endl;
 		//displayDeck(tempDeck);
 		wcout << endl << "  -------------------- Score section  ------------------------------- \n" << endl;
-		tempBoard->printScore();
+		for (int i = 0; i < tempPlayers.size(); i++)
+			wcout << tempPlayers[i].getPlayerName() << " :                 " << tempPlayers[i].getScore() << endl;
 
 
 		if (!tempBoard->getRoundPlay().empty())
@@ -613,49 +819,6 @@ private:
 
 
 
-	}
-	void pegging(vector<Card> tempDeck, vector<Player> tempPlayers) {
-
-		int pHandsize, intIn, k = getnextTurnPI(getlastTurnPI(), tempPlayers);
-		while (canPegging(tempPlayers)) {
-			displayBoard(tempDeck, myboard, tempPlayers);
-			pHandsize = tempPlayers[k].getHand().size(); // get hand size				
-
-			if (canPlay(tempPlayers[k].getHand()) && pHandsize != 0)
-			{
-				wcout << endl << tempPlayers[k].getPlayerName() << ", what card would you like to play? (input by order, between 1~" << pHandsize << ")" << endl;
-				while (!(wcin >> intIn) || intIn>pHandsize || intIn <1 || !(myboard->setRoundScore(tempPlayers[k].getHand()[intIn - 1]))) {
-					if (intIn>pHandsize || intIn <1)
-					{
-						wcout << "you must choose between 1~" << pHandsize << ", no alphabet character allowed";
-					}
-					wcin.clear();
-					wcin.ignore(numeric_limits<streamsize>::max(), '\n');
-				}
-
-				myboard->pushToRoundPlay(tempPlayers[k].getHand()[intIn - 1]); // push to roundplay vector			
-				wcout << tempPlayers[k].getPlayerName() << " played ";
-				tempPlayers[k].getHand()[intIn - 1].display(); wcout << endl;
-				tempPlayers[k].removeFromHand(intIn - 1);
-				setLastPlayCarPI(tempPlayers[k], tempPlayers);
-			}
-			else {
-				tempPlayers[k].setGoStatus();
-				// player can't play card ,go
-				if (pHandsize == 0)
-				{
-					wcout << endl << tempPlayers[k].getPlayerName() << "has empty hand, " << " GO ";
-				}
-				else {
-					wcout << endl << tempPlayers[k].getPlayerName() << " can't play a card (sum more than 31), " << " GO " << endl;
-				}
-			}
-			gameCheck(myboard, tempPlayers);
-			if (++k >= tempPlayers.size())
-			{
-				k = 0;
-			}
-		}
 	}
 
 	void game_greeting() {

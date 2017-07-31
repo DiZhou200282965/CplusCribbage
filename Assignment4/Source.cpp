@@ -561,7 +561,7 @@ public:
 				// player can't play card ,go
 				if (pHandsize == 0)
 				{
-					wcout << endl << tempPlayers[k].getPlayerName() << "has empty hand, " << " GO ";
+					wcout << endl << tempPlayers[k].getPlayerName() << "has an empty hand, " << " GO ";
 				}
 				else {
 					wcout << endl << tempPlayers[k].getPlayerName() << " can't play a card (sum more than 31), " << " GO " << endl;
@@ -595,9 +595,9 @@ public:
 				{
 					wcout << "no one can play," << tempPlayers[getLastPlayCarPI()].getPlayerName() << " played last card" << endl;
 					tempPlayers[getLastPlayCarPI()].addToScore(1);
-					wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 1 point for last play card" << endl;
+					wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " got 1 point for playing the last card" << endl;
 				}
-				else  wcout << "round score reaches 31, clear round play" << endl;
+				else  wcout << "round score reached 31, clearing round play" << endl;
 				myboard->setRoundScore(0);
 				myboard->clearRoundPlay();
 				/*wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " is the person who last played card " << endl;*/
@@ -692,17 +692,17 @@ private:
 		if (roundPlay.size()>=2 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue())
 		{
 			tempPlayers[getLastPlayCarPI()].addToScore(2);
-			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 2 point for pair" << endl;
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " got 2 points for a pair" << endl;
 		}		
 		if (roundPlay.size() >= 3 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue() && roundPlay[roundPlay.size() - 2].getCardIndexValue() == roundPlay[roundPlay.size() - 3].getCardIndexValue())
 		{
 			tempPlayers[getLastPlayCarPI()].addToScore(6);
-			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 6 point for royal pair!" << endl;
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " got 6 points for a royal pair!" << endl;
 		}
 		if (roundPlay.size()>=4 && lastCardIndex == roundPlay[roundPlay.size() - 2].getCardIndexValue() && roundPlay[roundPlay.size() - 2].getCardIndexValue() == roundPlay[roundPlay.size() - 3].getCardIndexValue())
 		{
 			tempPlayers[getLastPlayCarPI()].addToScore(12);
-			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 12 point for double pair royal !!!" << endl;
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " got 12 points for a double pair royal !!!" << endl;
 		}
 	}
 	void pegging_sumUp(vector<Card> roundPlay,vector<Player> &tempPlayers) {
@@ -713,7 +713,7 @@ private:
 		}	
 		if (sum == 15 || sum == 31) {
 			tempPlayers[getLastPlayCarPI()].addToScore(2);
-			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " get 2 point for 15 or 31" << endl;
+			wcout << tempPlayers[getLastPlayCarPI()].getPlayerName() << " got 2 points for 15 or 31" << endl;
 		}
 		
 	}
